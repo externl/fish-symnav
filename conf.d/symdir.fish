@@ -1,7 +1,11 @@
 set symdir_pwd (pwd)
 
+function __symdir_debug
+    echo "[symdir] $argv" 1>&2
+end
+
 function __symdir_cd_is_absolute
-    test (string split '' $argv)[1] = '/'
+    test (string split '' -- $argv)[1] = '/'
 end
 
 function __symdir_is_realpath
@@ -13,12 +17,12 @@ function __symdir_is_pwd
 end
 
 function __symdir_trim_trailing_slash
-    string trim --right --chars / $argv[1]
+    string trim --right --chars '/' -- $argv[1]
 end
 
 # TODO: This seems like a very bad to split with path; it does not check for '\/'s
 function __symdir_split_path --argument path
-    for component in (string split '/' $path)
+    for component in (string split '/' -- $path)
         echo "$component"
     end
 end
@@ -88,13 +92,7 @@ function __symdir_complete
     if __symdir_is_pwd
         set -l token (commandline --current-token)
         if string match --regex --quiet '^\.\./' "$token"
-            set -l path_list (__symdir_split_path $symdir_pwd)
-            set -e path_list[-1]
-
-            set -l commandline_list (commandline --token)
-            set -e commandline_list[-1]
-            set -l commandline_list $commandline_list (__symdir_join_path $path_list)
-
+            set -l commandline_list (commandline --tokenize)[1..-2] (__symdir_resolve_to "$token")
             commandline --replace (string join ' ' $commandline_list)
         end
     end

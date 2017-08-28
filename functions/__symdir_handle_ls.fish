@@ -1,14 +1,17 @@
 function __symdir_handle_ls
-    set -l cmd
+    set -l cmd 'ls'
+    set -l tokens (commandline --tokenize)
 
-    set -l path_list (__symdir_split_path $symdir_pwd)
-    set -e path_list[-1]
-    set -l prev_dir (__symdir_join_path $path_list)
+    test (count $tokens) -eq 1
+        and return
 
-    for arg in (commandline --token)
-        set -l replacement_arg (string replace -r '^\.\.' "$prev_dir" $arg)
-        set cmd $cmd "$replacement_arg"
+    for token in (commandline --tokenize)[2..-1]
+        set -l arg $token
+        if not string match --quiet --regex '^-' -- "$token"
+            set arg (__symdir_resolve_to $token)
+        end
+        set cmd $cmd "$arg"
     end
 
-    commandline --replace (string join ' ' $cmd)
+    commandline --replace (string join ' ' -- $cmd)
 end
