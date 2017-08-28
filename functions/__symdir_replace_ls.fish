@@ -1,4 +1,5 @@
-function __symdir_handle_ls
+function __symdir_replace_ls --description "Default symdir path replacement"
+
     set -l cmd 'ls'
     set -l tokens (commandline --tokenize)
 
