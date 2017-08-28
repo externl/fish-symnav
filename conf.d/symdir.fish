@@ -4,6 +4,14 @@ function __symdir_cd_is_absolute
     test (string split '' $argv)[1] = '/'
 end
 
+function __symdir_is_realpath
+    test (realpath "$symdir_pwd") = "$PWD"
+end
+
+function __symdir_is_pwd
+    test "$symdir_pwd" != "$PWD"
+end
+
 function __symdir_trim_trailing_slash
     string trim --right --chars / $argv[1]
 end
@@ -77,7 +85,7 @@ end
 # rewritten as 'cd /usr/local/'
 #
 function __symdir_complete
-    if test "$symdir_pwd" != "$PWD"
+    if __symdir_is_pwd
         set -l token (commandline --current-token)
         if string match --regex --quiet '^\.\./' "$token"
             set -l path_list (__symdir_split_path $symdir_pwd)
@@ -94,10 +102,12 @@ function __symdir_complete
 end
 
 function __symdir_execute
-    set -l cmd (commandline --token)[1]
-    set -l handler "__symdir_handle_$cmd"
-    if functions -q "$handler"
-        eval "$handler"
+    if __symdir_is_pwd
+        set -l cmd (commandline --token)[1]
+        set -l handler "__symdir_handle_$cmd"
+        if functions -q "$handler"
+            eval "$handler"
+        end
     end
     commandline -f execute
 end
@@ -105,7 +115,7 @@ end
 # In case another function changed the working directory, check if the current path
 # resolves to PWD, if not just use PWD
 function __symdir_pwd_handler --on-variable PWD
-    if test (realpath "$symdir_pwd") != "$PWD"
+    if not __symdir_is_realpath
         set symdir_pwd "$PWD"
     end
 end
