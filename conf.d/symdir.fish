@@ -93,6 +93,15 @@ function __symdir_complete
     commandline -f complete
 end
 
+function __symdir_execute
+    set -l cmd (commandline --token)[1]
+    set -l handler "__symdir_handle_$cmd"
+    if functions -q "$handler"
+        eval "$handler"
+    end
+    commandline -f execute
+end
+
 # In case another function changed the working directory, check if the current path
 # resolves to PWD, if not just use PWD
 function __symdir_pwd_handler --on-variable PWD
