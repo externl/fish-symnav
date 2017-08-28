@@ -55,9 +55,15 @@ function cd --wraps cd
         set symdir_pwd "$HOME"
         builtin cd
     else
+        set -l symdir_prevd "$symdir_pwd"
         set -l cd_dir (__symdir_trim_trailing_slash $argv[1])
         set symdir_pwd (__symdir_resolve_to "$cd_dir")
         builtin cd $symdir_pwd
+        set -l cd_status $status
+        if test $cd_status -ne 0
+            set symdir_pwd $symdir_prevd
+        end
+        return $cd_status
     end
 end
 
