@@ -1,10 +1,9 @@
-set -g symdir_pwd (pwd)
 set -g symdir_initialized 0
+set -g symdir_pwd (pwd)
 
 function __symdir_initialize
     test $symdir_initialized -eq 1
         and return
-        or set symdir_initialized 1
 
     # Install symdir cd shim
     if not functions --query __symdir_fish_cd
@@ -12,6 +11,8 @@ function __symdir_initialize
     end
     functions --erase cd
     functions --copy _symdir_shim_cd cd
+
+    set symdir_initialized 1
 end
 
 #

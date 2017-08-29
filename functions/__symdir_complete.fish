@@ -5,7 +5,7 @@
 #
 function __symdir_complete
     __symdir_initialize
-    if __symdir_is_pwd
+    if not __symdir_is_pwd
         set -l token (commandline --current-token)
         if string match --regex --quiet '^\.\./' "$token"
             set -l commandline_list (commandline --tokenize)[1..-2] (__symdir_resolve_to "$token")
