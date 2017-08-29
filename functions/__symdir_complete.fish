@@ -4,6 +4,7 @@
 # rewritten as 'cd /usr/local/'
 #
 function __symdir_complete
+    __symdir_initialize
     if __symdir_is_pwd
         set -l token (commandline --current-token)
         if string match --regex --quiet '^\.\./' "$token"
