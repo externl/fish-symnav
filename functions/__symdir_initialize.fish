@@ -7,7 +7,9 @@ function __symdir_initialize
         or set symdir_initialized 1
 
     # Install symdir cd shim
-    functions --copy cd __symdir_fish_cd
+    if not functions --query __symdir_fish_cd
+        functions --copy cd __symdir_fish_cd
+    end
     functions --erase cd
     functions --copy _symdir_shim_cd cd
 end
@@ -15,12 +17,14 @@ end
 #
 # Wrapper for cd. Resolve new symlink path and pass to builtin cd
 #
-function _symdir_shim_cd --wraps cd --argument directory
+function _symdir_shim_cd --wraps cd --description "Symdir shim for cd command" --argument arg
     if test (count $argv) -eq 0
         set symdir_pwd "$HOME"
         __symdir_fish_cd
-    else if test "$directory" = "/"
-        set symdir_pwd "$directory"
+    else if __symdir_string_match_flag "$arg"
+        __symdir_fish_cd $argv
+    else if test "$arg" = "/"
+        set symdir_pwd "$arg"
         __symdir_fish_cd $symdir_pwd
     else
         set -l symdir_prevd "$symdir_pwd"
@@ -34,7 +38,6 @@ function _symdir_shim_cd --wraps cd --argument directory
         return $cd_status
     end
 end
-
 
 function pwd --wraps pwd
     echo "$symdir_pwd"

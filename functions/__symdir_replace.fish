@@ -8,7 +8,7 @@ function __symdir_replace --description "Default symdir path replacement"
 
     for token in $tokens[2..-1]
         set -l arg $token
-        if not string match --quiet --regex '^-' -- "$token"
+        if not __symdir_string_match_flag "$token"
             set resolved (__symdir_resolve_to $token)
             test -e "$resolved"
                 and set arg "$resolved"
