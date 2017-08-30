@@ -1,5 +1,6 @@
 set -g symdir_initialized 0
-set -g symdir_pwd (pwd)
+set -q symdir_pwd; or set -g symdir_pwd (pwd)
+set -q symdir_complete_mode; or set -g symdir_complete_mode 'symlink'
 
 function __symdir_initialize
     test $symdir_initialized -eq 1
@@ -10,7 +11,9 @@ function __symdir_initialize
         functions --copy cd __symdir_fish_cd
     end
     functions --erase cd
-    functions --copy _symdir_shim_cd cd
+    functions --copy __symdir_shim_cd cd
+
+    source (string split '\n' (functions prompt_pwd | sed 's/$PWD/$symdir_pwd/') | psub)
 
     set symdir_initialized 1
 end
@@ -18,7 +21,7 @@ end
 #
 # Wrapper for cd. Resolve new symlink path and pass to builtin cd
 #
-function _symdir_shim_cd --wraps cd --description "Symdir shim for cd command" --argument arg
+function __symdir_shim_cd --description "Symdir shim for cd command" --argument arg
     if test (count $argv) -eq 0
         set symdir_pwd "$HOME"
         __symdir_fish_cd

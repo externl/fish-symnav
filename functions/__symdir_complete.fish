@@ -7,9 +7,25 @@ function __symdir_complete
     __symdir_initialize
     if not __symdir_is_pwd
         set -l token (commandline --current-token)
-        if string match --regex --quiet '^\.\./' "$token"
-            set -l commandline_list (commandline --tokenize)[1..-2] (__symdir_resolve_to "$token")
-            commandline --replace (string join ' ' $commandline_list)
+        if string match --regex --quiet '^\.\./?$' "$token"
+
+            set -l symlink_dir (__symdir_resolve_to "$token")
+
+            switch $symdir_complete_mode
+                # case "ask"
+                #     printf "$symlink_dir\n"(dirname $PWD) | fzf | read -l selection
+                #     commandline -f repaint
+                #     if test $selection = $symlink_dir
+                #         set -l commandline_list (commandline --tokenize)[1..-2] "$symlink_dir"
+                #         commandline --replace (string join ' ' $commandline_list)
+                #     end
+                case "symlink"
+                    set -l commandline_list (commandline --tokenize)[1..-2] "$symlink_dir"
+                    commandline --replace (string join ' ' $commandline_list)
+                    commandline -f complete
+                case *
+                    echo "$symdir_complete_mode is not a valid option for \$symdir_complete_mode" 1>&2
+            end
         end
     end
     commandline -f complete

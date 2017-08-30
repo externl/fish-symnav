@@ -1,4 +1,9 @@
 function __symdir_execute
+
+    # if commandline --paging-mode
+    #     return
+    # end
+
     __symdir_initialize
     if not __symdir_is_pwd
         set -l cmd (commandline --tokenize)[1]
