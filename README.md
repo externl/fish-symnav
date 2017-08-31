@@ -10,7 +10,7 @@ With [Fisherman](https://fisherman.github.io/):
 fisher externl/fish-symdir
 ```
 
-# Configuration
+## Configuration
 
 ```fish
 # Update `prompt_pwd` to use `$symdir_pwd`.
