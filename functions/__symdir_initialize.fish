@@ -1,56 +1,41 @@
 set -g symdir_initialized 0
-set -q symdir_pwd; or set -g symdir_pwd (pwd)
-set -q symdir_complete_mode; or set -g symdir_complete_mode 'symlink'
+set -q symdir_pwd           ; or set -g symdir_pwd (pwd)
+set -q symdir_prompt_pwd    ; or set -g symdir_prompt_pwd 1
+set -q simdir_fish_prompt   ; or set -g symdir_fish_prompt 1
+set -q symdir_rewrite_PWD   ; or set -g symdir_rewrite_PWD 1
+set -q symdir_complete_mode ; or set -g symdir_complete_mode 'symlink'
 
 function __symdir_initialize
     test $symdir_initialized -eq 1
         and return
 
-    # Install symdir cd shim
-    if not functions --query __symdir_fish_cd
-        functions --copy cd __symdir_fish_cd
-    end
-    functions --erase cd
-    functions --copy __symdir_shim_cd cd
+    set -l symdir_shadow_funcs (functions --all | grep __symdir_shadow_)
 
-    source (string split '\n' (functions prompt_pwd | sed 's/$PWD/$symdir_pwd/') | psub)
+    # Install all shadow functions.
+    # Fish functions are copied to __symdir_fish_$function_name
+    for func in $symdir_shadow_funcs
+        set -l function_name (string split '__symdir_shadow_' $func)[2]
+        set -l fish_function "__symdir_fish_$function_name"
+        if not functions --query $fish_function
+            functions --copy cd $fish_function
+        end
+        functions --erase $function_name
+        functions --copy $func $function_name
+    end
+
+    if test $symdir_prompt_pwd -eq 1
+        __symdir_update_function_PWD 'prompt_pwd'
+    end
+
+    if test $symdir_fish_prompt -eq 1
+        __symdir_update_function_PWD 'fish_prompt'
+    end
 
     set symdir_initialized 1
 end
 
-#
-# Wrapper for cd. Resolve new symlink path and pass to builtin cd
-#
-function __symdir_shim_cd --description "Symdir shim for cd command" --argument arg
-    if test (count $argv) -eq 0
-        set symdir_pwd "$HOME"
-        __symdir_fish_cd
-    else if __symdir_string_match_flag "$arg"
-        __symdir_fish_cd $argv
-    else if test "$arg" = "/"
-        set symdir_pwd "$arg"
-        __symdir_fish_cd $symdir_pwd
-    else
-        set -l symdir_prevd "$symdir_pwd"
-        set -l cd_dir (__symdir_trim_trailing_slash $argv[1])
-        set symdir_pwd (__symdir_resolve_to "$cd_dir")
-        __symdir_fish_cd $symdir_pwd
-        set -l cd_status $status
-        if test $cd_status -ne 0
-            set symdir_pwd $symdir_prevd
-        end
-        return $cd_status
-    end
-end
-
-function pwd --wraps pwd
-    echo "$symdir_pwd"
-end
-
-# In case another function changed the working directory, check if the current path
-# resolves to PWD, if not just use PWD
-function __symdir_pwd_handler --on-variable PWD
-    if not __symdir_is_realpath
-        set symdir_pwd "$PWD"
+function __symdir_update_function_PWD --arg func
+    if string match --quiet --regex '\$PWD' -- (functions $func)
+        string split '\n' -- (functions $func | sed 's/$PWD/$symdir_pwd/' ) | source
     end
 end

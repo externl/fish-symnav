@@ -12,13 +12,17 @@ function __symdir_complete
             set -l symlink_dir (__symdir_resolve_to "$token")
 
             switch $symdir_complete_mode
-                # case "ask"
-                #     printf "$symlink_dir\n"(dirname $PWD) | fzf | read -l selection
-                #     commandline -f repaint
-                #     if test $selection = $symlink_dir
-                #         set -l commandline_list (commandline --tokenize)[1..-2] "$symlink_dir"
-                #         commandline --replace (string join ' ' $commandline_list)
-                #     end
+                case "ask"
+                    printf "$symlink_dir\n"(dirname $PWD) | fzf | read -l selection
+                    commandline -f repaint
+                    if test $selection = $symlink_dir
+                        set -l commandline_list (commandline --tokenize)[1..-2] "$symlink_dir"
+                        commandline --replace (string join ' ' $commandline_list)
+                    else
+                        #XXX Maybe this should just leave the path alone?
+                        set -l commandline_list (commandline --tokenize)[1..-2] (dirname $PWD)
+                        commandline --replace (string join ' ' $commandline_list)
+                    end
                 case "symlink"
                     set -l commandline_list (commandline --tokenize)[1..-2] "$symlink_dir"
                     commandline --replace (string join ' ' $commandline_list)
