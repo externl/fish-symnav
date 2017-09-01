@@ -24,7 +24,7 @@ fisher externl/fish-symdir
 set symdir_prompt_pwd 1
 
 # Update function 'fish_prompt' to use '$symdir_pwd'.
-set simdir_fish_prompt 1
+set symdir_fish_prompt 1
 
 # Whether substituting or completing directories such as '../' should use symbolic links ('symlink')
 # or asked the user to choose between the symbolic link and the real path ('ask').

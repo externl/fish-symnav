@@ -1,7 +1,7 @@
 set -g symdir_initialized 0
 set -q symdir_pwd                  ; or set -g symdir_pwd (pwd)
 set -q symdir_prompt_pwd           ; or set -g symdir_prompt_pwd 1
-set -q simdir_fish_prompt          ; or set -g symdir_fish_prompt 1
+set -q symdir_fish_prompt         ; or set -g symdir_fish_prompt 1
 set -q symdir_substitution_mode    ; or set -g symdir_substitution_mode 'symlink'
 set -q symdir_substitute_PWD       ; or set -g symdir_substitute_PWD 1
 set -q symdir_execute_substitution ; or set -g symdir_execute_substitution 0
