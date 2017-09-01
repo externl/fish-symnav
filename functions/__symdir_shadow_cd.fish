@@ -13,7 +13,15 @@ function __symdir_shadow_cd --argument arg
     else
         set -l symdir_prevd "$symdir_pwd"
         set -l cd_dir (__symdir_trim_trailing_slash $argv[1])
-        set symdir_pwd (__symdir_resolve_to "$cd_dir")
+
+        set -l relative_path (__symdir_relative_to "$cd_dir")
+
+        if __symdir_is_absolute "$relative_path"
+            set symdir_pwd $relative_path
+        else
+            set symdir_pwd (__symdir_resolve_to $relative_path)
+        end
+
         __symdir_fish_cd $symdir_pwd
         set -l cd_status $status
         if test $cd_status -ne 0

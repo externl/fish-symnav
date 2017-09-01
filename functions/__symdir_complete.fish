@@ -4,19 +4,18 @@
 # rewritten as 'cd /usr/local/'
 #
 function __symdir_complete
+    # Setup variables and install shadow functions
     __symdir_initialize
     if not __symdir_is_pwd
         set -l token (commandline --current-token)
-        if string match --regex --quiet '^\.\./?$' "$token"
-
-            set -l symlink_dir (__symdir_resolve_to "$token")
-
-            switch $symdir_complete_mode
+        set -l relative_path (__symdir_relative_to "$token")
+        if __symdir_is_absolute $relative_path
+            switch $symdir_substitution_mode
                 case "ask"
-                    printf "$symlink_dir\n"(dirname $PWD) | fzf | read -l selection
+                    printf "$relative_path\n"(dirname $PWD) | fzf | read -l selection
                     commandline -f repaint
-                    if test $selection = $symlink_dir
-                        set -l commandline_list (commandline --tokenize)[1..-2] "$symlink_dir"
+                    if test $selection = $relative_path
+                        set -l commandline_list (commandline --tokenize)[1..-2] "$relative_path"
                         commandline --replace (string join ' ' $commandline_list)
                     else
                         #XXX Maybe this should just leave the path alone?
@@ -24,11 +23,10 @@ function __symdir_complete
                         commandline --replace (string join ' ' $commandline_list)
                     end
                 case "symlink"
-                    set -l commandline_list (commandline --tokenize)[1..-2] "$symlink_dir"
+                    set -l commandline_list (commandline --tokenize)[1..-2] "$relative_path"
                     commandline --replace (string join ' ' $commandline_list)
-                    commandline -f complete
                 case *
-                    echo "$symdir_complete_mode is not a valid option for \$symdir_complete_mode" 1>&2
+                    echo "$symdir_substitution_mode is not a valid option for \$symdir_substitution_mode" 1>&2
             end
         end
     end

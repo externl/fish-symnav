@@ -8,11 +8,9 @@ function __symdir_parse --description "Default symdir path parser"
 
     for token in $tokens[2..-1]
         set -l arg $token
-        if not __symdir_string_match_flag "$token"
-            set resolved (__symdir_resolve_to $token)
-            test -e "$resolved"
-                and set arg "$resolved"
-        end
+        set -l relative_path (__symdir_relative_to $token)
+        test -e "$relative_path"
+            and set arg "$relative_path"
         set cmd $cmd "$arg"
     end
 
