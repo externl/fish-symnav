@@ -1,6 +1,7 @@
 function __symdir_parse --description "Default symdir path parser"
 
-    set -l tokens (commandline --tokenize)
+    set -l tokens (__symdir_commandline_tokenize)
+
     test (count $tokens) -eq 1
         and return
 

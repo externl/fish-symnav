@@ -7,6 +7,7 @@ function __symdir_execute
     if test -n $current_buffer; and not __symdir_is_pwd
         set -l cmd (commandline --tokenize)[1]
         set -l parser "__symdir_parse_$cmd"
+
         if functions --query "$parser"
             eval "$parser"
         else
@@ -24,3 +25,5 @@ function __symdir_execute
 
     commandline -f execute
 end
+
+
