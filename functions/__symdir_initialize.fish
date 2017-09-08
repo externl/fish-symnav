@@ -1,7 +1,7 @@
 set -g symdir_initialized 0
 set -q symdir_pwd                  ; or set -g symdir_pwd (pwd)
 set -q symdir_prompt_pwd           ; or set -g symdir_prompt_pwd 1
-set -q symdir_fish_prompt         ; or set -g symdir_fish_prompt 1
+set -q symdir_fish_prompt          ; or set -g symdir_fish_prompt 1
 set -q symdir_substitution_mode    ; or set -g symdir_substitution_mode 'symlink'
 set -q symdir_substitute_PWD       ; or set -g symdir_substitute_PWD 1
 set -q symdir_execute_substitution ; or set -g symdir_execute_substitution 0
@@ -39,4 +39,8 @@ function __symdir_update_function_PWD --arg func
     if string match --quiet --regex '\$PWD' -- (functions $func)
         string split '\n' -- (functions $func | sed 's/$PWD/$symdir_pwd/' ) | source
     end
+end
+
+function __symdir_debug
+    echo "[symdir debug]" $argv 1>&2
 end
