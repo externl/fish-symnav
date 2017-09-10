@@ -16,7 +16,7 @@ function __symdir_shadow_cd --argument arg
 
         set -l relative_path (__symdir_relative_to "$cd_dir")
 
-        if __symdir_is_absolute "$relative_path"
+        if __symdir_is_realpath "$relative_path"
             set symdir_pwd $relative_path
         else
             set symdir_pwd (__symdir_resolve_to $relative_path)
