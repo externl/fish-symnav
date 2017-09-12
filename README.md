@@ -1,13 +1,20 @@
 # Symdir
 
-> Directory navigation (and more) of symbolic links for the [Fish](https://fishshell.com/) shell.
+> Symbolic link handling for [Fish](https://fishshell.com/)
 
 ## Install
-With [Fisherman](https://fisherman.github.io/):
+### [Fisherman](https://fisherman.github.io/)
 
 ```fish
 fisher externl/fish-symdir
 ```
+
+### Manually
+
+Copy all files in the [functions](./functions) directory into your fish functions directory, typically `~/.config/fish/functions`. Several key bindings need to be added to . See [key_bindings.fish](./key_bindings.fish) for the required
+binding list and the [bind command documentation](https://fishshell.com/docs/current/commands.html#bind) for instructions.
+
+Use `bind | grep __symdir` to check that symdir key bindings are enabled.
 
 ## Features
 
@@ -36,7 +43,3 @@ set symdir_execute_substitution 0
 # Substitute '$PWD' for '$symdir_pwd' prior to command execution.
 set symdir_substitute_PWD 1
 ```
-
-## Limitations
-<!-- * Missing special handling for `pushd`, `popd`, `prevd`, `nextd` -->
-The variable `PWD` is read-only in fish. Opening any application from fish will result in that application inheriting the real path and __not__ the symbolic path.
