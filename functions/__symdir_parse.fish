@@ -2,7 +2,6 @@ function __symdir_parse --description "Default symdir path parser"
 
     # --tokenize provides only string-type tokens. Ie. Pipes, redirections and excluded.
     set -l tokens (commandline --tokenize)
-
     test (count $tokens) -eq 1
         and return
 
@@ -10,17 +9,12 @@ function __symdir_parse --description "Default symdir path parser"
     set -l buffer (commandline --current-buffer)
     set -l new_commandline
     for token in $tokens
-        # XXX token should probably be escaped somehow in case token contains non alphanumeric chars which may
-        # affect the regular expression?
-        set -l index (string split ' ' -- (string match --regex --index -- "$token" "$buffer"))[1]
-
+        set -l index (string split ' ' -- (string match --regex --index -- "\Q$token\E" "$buffer"))[1]
         # token is further into buffer, so there are non-string characters which need
         # to be copied first
         if test $index -ne 1
             set -l length (echo $index - 1 | bc)
             set -l non_token_substr (string sub --start 1 --length $length -- "$buffer")
-            # test -z "$non_token_substr"
-            #     and set non_token_substr (string repeat --count $length ' ')
             set new_commandline "$new_commandline$non_token_substr"
             set buffer (string sub --start $index -- "$buffer")
         end
