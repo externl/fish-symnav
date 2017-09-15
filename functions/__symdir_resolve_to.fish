@@ -26,4 +26,3 @@ function __symdir_resolve_to --argument path
 
     __symdir_join_path $resolved_path
 end
-

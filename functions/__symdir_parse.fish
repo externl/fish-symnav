@@ -20,9 +20,11 @@ function __symdir_parse --description "Default symdir path parser"
         end
 
         set -l new_buffer_start (echo (string length -- $token) + 1 | bc)
-        set -l relative_token (__symdir_relative_to $token)
-        set new_commandline "$new_commandline$relative_token"
+        set -l new_token (__symdir_get_substitution $token)
+        set new_commandline "$new_commandline$new_token"
         set buffer (string sub --start $new_buffer_start -- "$buffer")
     end
-    commandline --replace $new_commandline
+
+    # Include buffer at the end in case there are trailing non-string tokens
+    commandline --replace $new_commandline$buffer
 end

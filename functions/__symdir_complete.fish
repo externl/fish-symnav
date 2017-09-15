@@ -14,28 +14,8 @@ function __symdir_complete
     # the for current_buffer token. The other possibility is that the user provided an absolute real path to complete
     if test -n "$relative_path"; and __symdir_is_absolute $relative_path
         set -l before_buffer (commandline --current-buffer)
-        switch $symdir_substitution_mode
-            case "ask"
-                __symdir_is_absolute "$current_token"
-                    and  set -l real_path (realpath $current_token)
-                    or set -l real_path (realpath $symdir_pwd/$current_token)
 
-                if test "$real_path" != $relative_path
-                    printf "$relative_path\n$real_path" | fzf --height '2' | read -l selection
-                    commandline -f repaint
-                    test -z "$selection"
-                        and return
-                    if test "$selection" = "$relative_path"
-                        __symdir_replace_current_token "$relative_path"
-                    else
-                        __symdir_replace_current_token "$real_path"
-                    end
-                end
-            case "symlink"
-                __symdir_replace_current_token $relative_path
-            case *
-                echo "$symdir_substitution_mode is not a valid option for \$symdir_substitution_mode" 1>&2
-        end
+        __symdir_replace_current_token (__symdir_get_substitution "$current_token")
 
         # If we've modified the command line then don't perform "a second" completion unless
         # symdir_execute_substitution is set
