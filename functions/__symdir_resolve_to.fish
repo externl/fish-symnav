@@ -2,7 +2,7 @@
 # Resolve new "resolved symlink" directory from 'path'.
 # Eg. passing '../foo/bor' with the current path of /path/to/symlink1/symlink2/
 # will result in /path/to/symlink1/foo/bar
-# This will remove all '..'s
+# This will remove all '../' and './'
 #
 function __symdir_resolve_to --argument path
     set -l to_dir $path
@@ -19,6 +19,8 @@ function __symdir_resolve_to --argument path
             set resolved_path $resolved_path ""
         else if test $component = ".."
             set -e resolved_path[-1]
+        else if test $component = "."
+            continue # skip this component
         else
             set resolved_path $resolved_path "$component"
         end
