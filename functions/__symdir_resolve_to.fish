@@ -8,8 +8,8 @@ function __symdir_resolve_to --argument path
     set -l to_dir $path
 
     __symdir_is_absolute "$to_dir"
-        and set -l path_to_resolve $to_dir
-        or set -l path_to_resolve "$symdir_pwd/$to_dir"
+    and set -l path_to_resolve $to_dir
+    or set -l path_to_resolve "$symdir_pwd/$to_dir"
 
     set -l path_list (__symdir_split_path "$path_to_resolve")
 

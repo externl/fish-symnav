@@ -12,8 +12,8 @@ function __symdir_execute
         end
 
         test $symdir_execute_substitution -eq 0
-            and test $current_buffer != (commandline --current-buffer)
-            and return
+        and test $current_buffer != (commandline --current-buffer)
+        and return
     end
 
     commandline -f execute

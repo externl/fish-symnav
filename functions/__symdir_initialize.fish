@@ -12,8 +12,7 @@ function __symdir_initialize
 
     set -l symdir_shadow_funcs (functions --all | grep __symdir_shadow_)
 
-    # Install all shadow functions.
-    # Fish functions are copied to __symdir_fish_$function_name
+    # Install all shadow functions. Fish functions are copied to __symdir_fish_$function_name
     for func in $symdir_shadow_funcs
         set -l function_name (string split '__symdir_shadow_' $func)[2]
         set -l fish_function "__symdir_fish_$function_name"
@@ -24,6 +23,12 @@ function __symdir_initialize
         functions --copy $func $function_name
     end
 
+    function __symdir_update_function_PWD --arg func
+        if string match --quiet --regex '\$PWD' -- (functions $func)
+            string split '\n' -- (functions $func | sed 's/$PWD/$symdir_pwd/' ) | source
+        end
+    end
+
     if test $symdir_prompt_pwd -eq 1
         __symdir_update_function_PWD 'prompt_pwd'
     end
@@ -32,13 +37,9 @@ function __symdir_initialize
         __symdir_update_function_PWD 'fish_prompt'
     end
 
-    set symdir_initialized 1
-end
+    functions -e __symdir_update_function_PWD
 
-function __symdir_update_function_PWD --arg func
-    if string match --quiet --regex '\$PWD' -- (functions $func)
-        string split '\n' -- (functions $func | sed 's/$PWD/$symdir_pwd/' ) | source
-    end
+    set symdir_initialized 1
 end
 
 function __symdir_debug

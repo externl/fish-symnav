@@ -3,7 +3,7 @@ function __symdir_parse --description "Default symdir path parser"
     # --tokenize provides only string-type tokens. Ie. Pipes, redirections and excluded.
     set -l tokens (commandline --tokenize)
     test (count $tokens) -eq 1
-        and return
+    and return
 
     set -l pos 0
     set -l buffer (commandline --current-buffer)

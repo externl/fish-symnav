@@ -9,8 +9,8 @@ function __symdir_relative_to --argument path
     set -l to_dir $path
 
     __symdir_is_absolute "$to_dir"
-        and set -l path_to_resolve $to_dir
-        or set -l path_to_resolve "$symdir_pwd/$to_dir"
+    and set -l path_to_resolve $to_dir
+    or set -l path_to_resolve "$symdir_pwd/$to_dir"
 
     set -l path_list (__symdir_split_path "$path_to_resolve")
 
@@ -21,7 +21,7 @@ function __symdir_relative_to --argument path
             set resolved_path $resolved_path ""
         else if test $component = ".."
             test -L (__symdir_join_path $resolved_path)
-                and set symlink_detected 1
+            and set symlink_detected 1
             set -e resolved_path[-1]
         else
             set resolved_path $resolved_path "$component"
