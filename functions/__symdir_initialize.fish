@@ -10,6 +10,9 @@ function __symdir_initialize
     test $symdir_initialized -eq 1
         and return
 
+    # Check that if 'ask' mode is set that the required dependencies are available
+    __symdir_validate_substitution_mode
+
     set -l symdir_shadow_funcs (functions --all | grep __symdir_shadow_)
 
     # Install all shadow functions. Fish functions are copied to __symdir_fish_$function_name
