@@ -5,7 +5,6 @@
 function __symnav_get_substitution --argument current_token
 
     set -l relative_path (__symnav_relative_to "$current_token")
-
     switch $symnav_substitution_mode
         #
         # Ask mode. Use fzf to ask user to choose between symbolic link and real path
@@ -15,7 +14,8 @@ function __symnav_get_substitution --argument current_token
             and  set -l path_to_check $current_token
             or set -l path_to_check $symnav_pwd/$current_token
 
-            if not set -l real_path (realpath "$path_to_check" ^/dev/null)
+            set -l real_path (realpath "$path_to_check" ^/dev/null)
+            if test -z "$real_path"
                 # Not a real path
                 printf $current_token
                 return
