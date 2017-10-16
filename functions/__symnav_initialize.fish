@@ -45,6 +45,14 @@ function __symnav_initialize
     set symnav_initialized 1
 end
 
+# In case another function changed the working directory, check if the current path
+# resolves to PWD, if not just use PWD
+function __symnav_pwd_handler --on-variable PWD
+    if not __symnav_is_realpath
+        set symnav_pwd "$PWD"
+    end
+end
+
 function __symnav_debug
     echo "[symnav debug]" $argv 1>&2
 end

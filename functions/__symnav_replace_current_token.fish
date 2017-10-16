@@ -1,10 +1,11 @@
 #
 # Replaces the current token with 'new_token'. Since the cursor position may be anywhere inside of the token
-# we first need construct a new commandline string as if the cursor position as at the end of the token.
-# Note: For some reason using 'commandline -f forward-word' etc not work here. They seem to only be executed later
-# can not be used in real time
+# we first need construct a new commandline string as if the cursor position was at the end of the token.
 #
-# We construct the new commandline string appending the end of the token onto the cut-at position until we have
+# Note: For some reason using 'commandline -f forward-word' (and friends) does not work here.
+#       They seem to only be executed later can not be used in real time
+#
+# We construct the new commandline string by appending the end of the token onto the cut-at position until we have
 # a complete string. Eg. 'cd /usr/local/opt/fi' with token '/usr/local/opt/fish/'. We would fist try
 # 1. 'cd /usr/local/opt/fi/', then
 # 2. 'cd /usr/local/opt/fih/', and finally

@@ -1,8 +1,8 @@
-function __symnav_parse --description "Default symnav path parser"
+function __symnav_parse_commandline --description "Symnav commandline parser"
 
     # --tokenize provides only string-type tokens. Ie. Pipes, redirections and excluded.
     set -l tokens (commandline --tokenize)
-    test (count $tokens) -eq 1
+    test (count $tokens) -le 1
     and return
 
     set -l pos 0
