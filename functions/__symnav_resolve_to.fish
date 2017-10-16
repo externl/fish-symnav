@@ -4,14 +4,14 @@
 # will result in /path/to/symlink1/foo/bar
 # This will remove all '../' and './'
 #
-function __symdir_resolve_to --argument path
+function __symnav_resolve_to --argument path
     set -l to_dir $path
 
-    __symdir_is_absolute "$to_dir"
+    __symnav_is_absolute "$to_dir"
     and set -l path_to_resolve $to_dir
-    or set -l path_to_resolve "$symdir_pwd/$to_dir"
+    or set -l path_to_resolve "$symnav_pwd/$to_dir"
 
-    set -l path_list (__symdir_split_path "$path_to_resolve")
+    set -l path_list (__symnav_split_path "$path_to_resolve")
 
     set -l resolved_path
     for component in $path_list
@@ -26,5 +26,5 @@ function __symdir_resolve_to --argument path
         end
     end
 
-    __symdir_join_path $resolved_path
+    __symnav_join_path $resolved_path
 end

@@ -12,7 +12,7 @@
 #
 # We also need to be sure to save anything thats to the right of the cursor at the time of completion ('the_right').
 #
-function __symdir_replace_current_token --argument new_token
+function __symnav_replace_current_token --argument new_token
     set -l before_buffer (commandline --current-buffer)
     set -l before_at_cursor (commandline --cut-at-cursor)
     set -l token (commandline --current-token)

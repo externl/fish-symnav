@@ -1,4 +1,4 @@
-function __symdir_parse --description "Default symdir path parser"
+function __symnav_parse --description "Default symnav path parser"
 
     # --tokenize provides only string-type tokens. Ie. Pipes, redirections and excluded.
     set -l tokens (commandline --tokenize)
@@ -20,7 +20,7 @@ function __symdir_parse --description "Default symdir path parser"
         end
 
         set -l new_buffer_start (echo (string length -- $token) + 1 | bc)
-        set -l new_token (__symdir_get_substitution $token)
+        set -l new_token (__symnav_get_substitution $token)
 
         set new_commandline "$new_commandline$new_token"
         set buffer (string sub --start $new_buffer_start -- "$buffer")

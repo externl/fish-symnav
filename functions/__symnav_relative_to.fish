@@ -5,14 +5,14 @@
 # Eg. passing '../foo/bar' with the current path of /path/to/all/real/dirs
 # will return '../foo/bar'
 #
-function __symdir_relative_to --argument path
+function __symnav_relative_to --argument path
     set -l to_dir $path
 
-    __symdir_is_absolute "$to_dir"
+    __symnav_is_absolute "$to_dir"
     and set -l path_to_resolve $to_dir
-    or set -l path_to_resolve "$symdir_pwd/$to_dir"
+    or set -l path_to_resolve "$symnav_pwd/$to_dir"
 
-    set -l path_list (__symdir_split_path "$path_to_resolve")
+    set -l path_list (__symnav_split_path "$path_to_resolve")
 
     set -l symlink_detected 0
     set -l resolved_path
@@ -20,7 +20,7 @@ function __symdir_relative_to --argument path
         if test -z "$component"
             set resolved_path $resolved_path ""
         else if test $component = ".."
-            test -L (__symdir_join_path $resolved_path)
+            test -L (__symnav_join_path $resolved_path)
             and set symlink_detected 1
             set -e resolved_path[-1]
         else
@@ -29,7 +29,7 @@ function __symdir_relative_to --argument path
     end
 
     if test $symlink_detected -eq 1
-        __symdir_join_path $resolved_path
+        __symnav_join_path $resolved_path
     else
         printf $to_dir
     end
