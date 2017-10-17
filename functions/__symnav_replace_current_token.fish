@@ -20,8 +20,7 @@ function __symnav_replace_current_token --argument new_token
     set -l commandline_at_cursor_with_token
     # Since this token will be placed raw onto the command line (no quotes)
     # we need to escape any spaces (assuming they're not already escaped)
-    set new_token (string replace --all --regex -- "(?<!\\\\)\s" "\ " "$new_token")
-
+    set escaped_token (__symnav_escape_token_space "$new_token")
     if not string match --quiet -- "*$token" "$before_at_cursor"
         set -l token_array (string split -- '' "$token")
         set -l test_commandline $before_at_cursor
@@ -40,7 +39,7 @@ function __symnav_replace_current_token --argument new_token
     set -l the_left (string split --right --max 1 -- "$token" "$commandline_at_cursor_with_token")[1]
     set -l the_right (string sub --start (echo (string length -- "$the_left$token")" + 1" | bc ) -- "$before_buffer")
 
-    commandline --replace "$the_left$new_token"
+    commandline --replace "$the_left$escaped_token"
     commandline --insert -- "$the_right" # empty if the cursor was already at the end of the line
-    commandline --cursor (string length "$the_left$new_token")
+    commandline --cursor (string length "$the_left$escaped_token")
 end

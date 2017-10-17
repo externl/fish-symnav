@@ -9,7 +9,8 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
     set -l buffer (commandline --current-buffer)
     set -l new_commandline
     for token in $tokens
-        set -l index (string split ' ' -- (string match --regex --index -- "\Q$token\E" "$buffer"))[1]
+        set -l escaped_token (__symnav_escape_token_space "$token")
+        set -l index (string split ' ' -- (string match --regex --index -- "\Q$escaped_token\E" "$buffer"))[1]
         # token is further into buffer, so there are non-string characters which need
         # to be copied first
         if test $index -ne 1
@@ -19,8 +20,8 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
             set buffer (string sub --start $index -- "$buffer")
         end
 
-        set -l new_buffer_start (echo (string length -- $token) + 1 | bc)
-        set -l new_token (__symnav_get_substitution $token)
+        set -l new_buffer_start (echo (string length -- $escaped_token) + 1 | bc)
+        set -l new_token (__symnav_escape_token_space (__symnav_get_substitution $escaped_token))
 
         set new_commandline "$new_commandline$new_token"
         set buffer (string sub --start $new_buffer_start -- "$buffer")

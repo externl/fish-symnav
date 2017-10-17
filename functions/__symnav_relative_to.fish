@@ -13,7 +13,6 @@ function __symnav_relative_to --argument path
     or set -l path_to_resolve "$symnav_pwd/$to_dir"
 
     set -l path_list (__symnav_split_path "$path_to_resolve")
-
     set -l symlink_detected 0
     set -l resolved_path
     for component in $path_list

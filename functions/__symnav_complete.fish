@@ -15,6 +15,7 @@ function __symnav_complete
     # we may have encountered a symbolic link during path resolution so we should try to substitute
     # the for current_buffer token. The other possibility is that the user provided an absolute real path
     # This test is an optimization to avoid extra calls for relative path completion
+
     if test -n "$relative_path"
     and __symnav_is_absolute $relative_path
         set -l before_buffer (commandline --current-buffer)
