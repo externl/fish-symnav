@@ -13,6 +13,11 @@ function __symnav_initialize
     # Check that if 'ask' mode is set that the required dependencies are available
     __symnav_validate_substitution_mode
 
+    # Symnav requires the __symnav_complete and __symnav_execute bindings to be installed
+    if test (bind | grep __symnav | wc -l ) -ne 3
+        printf "\n[symnav] completion and execution bindings are not installed\n"
+    end
+
     set -l symnav_shadow_funcs (functions --all | grep __symnav_shadow_)
 
     # Install all shadow functions. Fish functions are copied to __symnav_fish_$function_name
