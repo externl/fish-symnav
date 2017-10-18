@@ -9,6 +9,13 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
     set -l buffer (commandline --current-buffer)
     set -l new_commandline
     for token in $tokens
+        # Tokenization of \'s is weird. Also *'s
+        # https://github.com/fish-shell/fish-shell/issues/4489
+        # For now, if we encounted one, return and skip parsing
+        if string match --quiet --regex --  '[\\\\*]' "$token"
+            return
+        end
+
         # First try to match the sting as is
         set -l match (string match --regex --index -- "\Q$token\E" "$buffer")
 
@@ -26,8 +33,8 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
         end
 
         # Did not match unable to continue. Abort.
+        # TODO: Should we log something or print a warning here?
         if test -z "$match"
-            # TODO: Should we log something or print a warning here?
             return
         end
 
@@ -43,7 +50,7 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
         end
 
         set -l new_buffer_start (echo (string length -- $token) + 1 | bc)
-        set -l new_token  (__symnav_get_substitution $token)
+        set -l new_token (__symnav_get_substitution $token)
 
         set new_commandline "$new_commandline$new_token"
         set buffer (string sub --start $new_buffer_start -- "$buffer")
