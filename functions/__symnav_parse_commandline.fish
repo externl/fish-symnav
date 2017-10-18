@@ -9,8 +9,30 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
     set -l buffer (commandline --current-buffer)
     set -l new_commandline
     for token in $tokens
-        set -l escaped_token (__symnav_escape_token_space "$token")
-        set -l index (string split ' ' -- (string match --regex --index -- "\Q$token\E" "$buffer"))[1]
+        # First try to match the sting as is
+        set -l match (string match --regex --index -- "\Q$token\E" "$buffer")
+
+        # If test match failed then try to escape the token without quotes
+        # It's possible it was a path with spaces (tokenize removes them as it first 'evals'? the token :[)
+        if test -z "$match"
+            set -l escaped_token (string escape --no-quoted "$token")
+            set -l match (string match --regex --index -- "\Q$escaped_token\E" "$buffer")
+        end
+
+        # Last try. Escape with quotes if necessary and try to match
+        if test -z "$match"
+            set -l escaped_token (string escape "$token")
+            set -l match (string match --regex --index -- "\Q$escaped_token\E" "$buffer")
+        end
+
+        # Did not match unable to continue. Abort.
+        if test -z "$match"
+            # TODO: Should we log something or print a warning here?
+            return
+        end
+
+        set -l index (string split ' ' -- $match)[1]
+
         # token is further into buffer, so there are non-string characters which need
         # to be copied first
         if test $index -ne 1
