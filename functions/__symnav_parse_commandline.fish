@@ -13,7 +13,7 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
         # https://github.com/fish-shell/fish-shell/issues/4489
         # For now, if we encounted one, return and skip parsing
         if string match --quiet --regex --  '[\\\\*]' "$token"
-            return
+            continue
         end
 
         # First try to match the sting as is
@@ -35,7 +35,7 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
         # Did not match unable to continue. Abort.
         # TODO: Should we log something or print a warning here?
         if test -z "$match"
-            return
+            continue
         end
 
         set -l index (string split ' ' -- $match)[1]
