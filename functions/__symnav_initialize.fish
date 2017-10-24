@@ -13,9 +13,12 @@ function __symnav_initialize
     # Check that if 'ask' mode is set that the required dependencies are available
     __symnav_validate_substitution_mode
 
-    # Symnav requires the __symnav_complete and __symnav_execute bindings to be installed
-    if test (bind | grep __symnav | wc -l ) -ne 3
-        printf "\n[symnav] completion and execution bindings are not installed\n"
+    # Symnav requires the __symnav_complete and __symnav_execute (two of them) bindings to be installed
+    if test (bind | grep __symnav | wc -l) -ne 3
+        test (bind | grep __symnav_execute | wc -l) -ne 2
+        and printf " [symnav] execution bindings are not installed\n"
+        test (bind | grep __symnav_complete | wc -l) -ne 1
+        and printf " [symnav] completion bindings are not installed\n"
     end
 
     set -l symnav_shadow_funcs (functions --all | grep __symnav_shadow_)
@@ -52,6 +55,7 @@ end
 
 # In case another function changed the working directory, check if the current path
 # resolves to PWD, if not just use PWD
+# Load during initialization so that the --on-variable hook is loaded by Fish
 function __symnav_pwd_handler --on-variable PWD
     if not __symnav_is_realpath
         set symnav_pwd "$PWD"

@@ -1,4 +1,7 @@
+#
+# Parses command line looking for symbolic links.
 # Called before Fish's commandline execute
+#
 function __symnav_execute
     # Ensure symnav is initialized
     __symnav_initialize
@@ -18,5 +21,3 @@ function __symnav_execute
 
     commandline -f execute
 end
-
-

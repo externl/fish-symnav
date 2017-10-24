@@ -22,13 +22,13 @@ function __symnav_parse_commandline --description "Symnav commandline parser"
         # If test match failed then try to escape the token without quotes
         # It's possible it was a path with spaces (tokenize removes them as it first 'evals'? the token :[)
         if test -z "$match"
-            set -l escaped_token (string escape --no-quoted "$token")
+            set -l escaped_token (string escape --no-quoted -- "$token")
             set -l match (string match --regex --index -- "\Q$escaped_token\E" "$buffer")
         end
 
         # Last try. Escape with quotes if necessary and try to match
         if test -z "$match"
-            set -l escaped_token (string escape "$token")
+            set -l escaped_token (string escape -- "$token")
             set -l match (string match --regex --index -- "\Q$escaped_token\E" "$buffer")
         end
 
