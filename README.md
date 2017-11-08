@@ -3,6 +3,9 @@
 > Symbolic link navigation for [Fish](https://fishshell.com/)
 
 ## Install
+
+Symnav was developed and tested on Fish 2.6.0. Please report any issues.
+
 ### [Fisherman](https://fisherman.github.io/)
 
 ```fish
