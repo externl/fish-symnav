@@ -1,5 +1,5 @@
 set -g symnav_initialized 0
-set -q symnav_pwd                  ; or set -g symnav_pwd (pwd)
+set -q symnav_pwd                  ; or set -g symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
 set -q symnav_prompt_pwd           ; or set -g symnav_prompt_pwd 1
 set -q symnav_fish_prompt          ; or set -g symnav_fish_prompt 1
 set -q symnav_substitution_mode    ; or set -g symnav_substitution_mode 'symlink'
@@ -37,6 +37,9 @@ function __symnav_initialize
     function __symnav_update_function_PWD --arg func
         if string match --quiet --regex '\$PWD' -- (functions $func)
             string split '\n' -- (functions $func | sed 's/$PWD/$symnav_pwd/' ) | source
+        end
+        if string match --quiet --regex 'realhome ~' -- (functions $func)
+            string split '\n' -- (functions $func | sed 's/realhome ~/realhome $HOME/' ) | source
         end
     end
 
