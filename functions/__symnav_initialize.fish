@@ -1,5 +1,5 @@
 set -g symnav_initialized 0
-set -q symnav_pwd                  ; or set -g symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
+set -g symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
 set -q symnav_prompt_pwd           ; or set -g symnav_prompt_pwd 1
 set -q symnav_fish_prompt          ; or set -g symnav_fish_prompt 1
 set -q symnav_substitution_mode    ; or set -g symnav_substitution_mode 'symlink'
@@ -21,37 +21,40 @@ function __symnav_initialize
         and printf " [symnav] completion bindings are not installed\n"
     end
 
-    set -l symnav_shadow_funcs (functions --all | grep __symnav_shadow_)
-
     # Install all shadow functions. Fish functions are copied to __symnav_fish_$function_name
-    for func in $symnav_shadow_funcs
-        set -l function_name (string split '__symnav_shadow_' $func)[2]
-        set -l fish_function "__symnav_fish_$function_name"
-        if not functions --query $fish_function
-            functions --copy cd $fish_function
+    for func in (functions --all | grep __symnav_shadow_)
+        set -l function_name (string split __symnav_shadow_ $func)[2]
+        set -l fish_function __symnav_fish_$function_name
+
+        # If the query fails then $function_name either a builtin or does not exist
+        if functions --query $function_name
+            functions --copy $function_name $fish_function
         end
         functions --erase $function_name
         functions --copy $func $function_name
     end
 
-    function __symnav_update_function_PWD --arg func
+    function __symnav_update_fish_function --arg func
+        functions --copy $func __symnav_fish_$func
         if string match --quiet --regex '\$PWD' -- (functions $func)
             string split '\n' -- (functions $func | sed 's/$PWD/$symnav_pwd/' ) | source
         end
         if string match --quiet --regex 'realhome ~' -- (functions $func)
             string split '\n' -- (functions $func | sed 's/realhome ~/realhome $HOME/' ) | source
         end
+        # Copy to shadow function so that we can remove it in uninstall.fish
+        functions --copy $func __symnav_shadow_$func
     end
 
     if test $symnav_prompt_pwd -eq 1
-        __symnav_update_function_PWD 'prompt_pwd'
+        __symnav_update_fish_function 'prompt_pwd'
     end
 
     if test $symnav_fish_prompt -eq 1
-        __symnav_update_function_PWD 'fish_prompt'
+        __symnav_update_fish_function 'fish_prompt'
     end
 
-    functions -e __symnav_update_function_PWD
+    functions --erase __symnav_update_fish_function
 
     set symnav_initialized 1
 end
@@ -63,8 +66,4 @@ function __symnav_pwd_handler --on-variable PWD
     if not __symnav_is_realpath
         set symnav_pwd "$PWD"
     end
-end
-
-function __symnav_debug
-    echo "[symnav debug]" $argv 1>&2
 end
