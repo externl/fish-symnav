@@ -30,7 +30,7 @@ function __symnav_relative_to --argument path
     if test $symlink_detected -eq 1
         __symnav_join_path $resolved_path
     else
-        printf $to_dir
+        printf '%s' $to_dir
     end
 end
 
