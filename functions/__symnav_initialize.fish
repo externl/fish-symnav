@@ -2,6 +2,7 @@ set -g symnav_initialized 0
 set -g symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
 set -q symnav_prompt_pwd           ; or set -g symnav_prompt_pwd 1
 set -q symnav_fish_prompt          ; or set -g symnav_fish_prompt 1
+set -q symnav_fix_function_list    ; or set -g symnav_fix_function_list 'prompt_pwd' 'fish_prompt' 'fish_title' '__parse_current_folder'
 set -q symnav_substitution_mode    ; or set -g symnav_substitution_mode 'symlink'
 set -q symnav_substitute_PWD       ; or set -g symnav_substitute_PWD 1
 set -q symnav_execute_substitution ; or set -g symnav_execute_substitution 0
@@ -34,7 +35,7 @@ function __symnav_initialize
         functions --copy $func $function_name
     end
 
-    function __symnav_update_fish_function --arg func
+    function __symnav_fix_function --arg func
         functions --copy $func __symnav_fish_$func
         if string match --quiet --regex '\$PWD' -- (functions $func)
             string split '\n' -- (functions $func | sed 's/$PWD/$symnav_pwd/' ) | source
@@ -46,15 +47,11 @@ function __symnav_initialize
         functions --copy $func __symnav_shadow_$func
     end
 
-    if test $symnav_prompt_pwd -eq 1
-        __symnav_update_fish_function 'prompt_pwd'
+    for func in $symnav_fix_function_list
+        __symnav_fix_function $func
     end
 
-    if test $symnav_fish_prompt -eq 1
-        __symnav_update_fish_function 'fish_prompt'
-    end
-
-    functions --erase __symnav_update_fish_function
+    functions --erase __symnav_fix_function
 
     set symnav_initialized 1
 end
