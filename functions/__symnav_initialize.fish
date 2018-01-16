@@ -1,5 +1,5 @@
-set -g symnav_initialized 0
-set -g symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
+set -q symnav_prompt_pwd           ; or set -g symnav_initialized 0
+set -q symnav_pwd                  ; or set -g symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
 set -q symnav_prompt_pwd           ; or set -g symnav_prompt_pwd 1
 set -q symnav_fish_prompt          ; or set -g symnav_fish_prompt 1
 set -q symnav_fix_function_list    ; or set -g symnav_fix_function_list 'prompt_pwd' 'fish_prompt' 'fish_title' '__parse_current_folder'
