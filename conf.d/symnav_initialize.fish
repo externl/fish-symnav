@@ -17,12 +17,12 @@ function __symnav_initialize
 
     # Symnav requires the __symnav_complete and __symnav_execute (two of them) bindings to be installed
     # functions fish_user_key_bindings
-    if test (bind | grep __symnav | wc -l) -ne 3
-        test (bind | grep __symnav_execute | wc -l) -ne 2
-        and printf " symnav_initialize.fish: execution bindings are not installed\n"
-        test (bind | grep __symnav_complete | wc -l) -ne 1
-        and printf " symnav_initialize.fish: completion bindings are not installed\n"
-    end
+    # if test (bind | grep __symnav | wc -l) -ne 3
+    #     test (bind | grep __symnav_execute | wc -l) -ne 2
+    #     and printf " symnav_initialize.fish: execution bindings are not installed\n"
+    #     test (bind | grep __symnav_complete | wc -l) -ne 1
+    #     and printf " symnav_initialize.fish: completion bindings are not installed\n"
+    # end
 
     # Install all shadow functions. Fish functions are copied to __symnav_fish_$function_name
     for func in (functions --all | grep __symnav_shadow_)
