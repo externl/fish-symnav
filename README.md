@@ -44,4 +44,11 @@ set symnav_execute_substitution 0 (1 to enable)
 
 # Substitute '$PWD' for '$symnav_pwd' prior to command execution.
 set symnav_substitute_PWD 1 (0 to disable)
+
+# Initialize symnav during first execution or completion.
+set symnav_lazy_initialize 0 (1 to enable)
+
+# List of additional functions to modify for symnav compatibility.
+# Instances of '$PWD', 'realpath', etc are replaced (in memory) by 'symnav_pwd'
+set symnav_fix_function_user_list 'func1' 'func2' ...
 ```
