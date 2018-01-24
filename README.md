@@ -50,5 +50,5 @@ set symnav_lazy_initialize 0 (1 to enable)
 
 # List of additional functions to modify for symnav compatibility.
 # Instances of '$PWD', 'realpath', etc are replaced (in memory) by 'symnav_pwd'
-set symnav_fix_function_user_list 'func1' 'func2' ...
+set symnav_user_fix_function_list 'func1' 'func2' ...
 ```

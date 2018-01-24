@@ -15,7 +15,8 @@ function __symnav_initialize
     # Check that if 'ask' mode is set that the required dependencies are available
     __symnav_validate_substitution_mode
 
-    # Check that symnav bindings are installed
+    # Check that symnav bindings are installed. Lazy initializations are called after setup so the bind
+    # command is available. By default we scan the 'fish_user_key_bindings' function
     test $symnav_lazy_initialize -eq 1
     and set -l bind_check 'bind'
     or set -l bind_check 'functions fish_user_key_bindings'
@@ -41,7 +42,7 @@ function __symnav_initialize
         functions --copy $func $function_name
     end
 
-    for func in $symnav_fix_function_list $symnav_fix_function_user_list
+    for func in $symnav_fix_function_list $symnav_user_fix_function_list
         __symnav_fix_function $func
     end
 
