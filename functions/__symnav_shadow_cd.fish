@@ -2,6 +2,9 @@
 # Shadows fish's cd. Resolve new symlink path and pass to builtin cd
 #
 function __symnav_shadow_cd --argument arg
+
+    set -l symnav_prevd "$symnav_pwd"
+
     if test (count $argv) -eq 0
         set symnav_pwd "$HOME"
         __symnav_fish_cd
@@ -10,8 +13,10 @@ function __symnav_shadow_cd --argument arg
     else if test "$arg" = "/"
         set symnav_pwd "$arg"
         __symnav_fish_cd $symnav_pwd
+    else if test "$arg" = "-"
+        set symnav_pwd "$symnav_dirprev[-1]"
+        __symnav_fish_cd $symnav_pwd
     else
-        set -l symnav_prevd "$symnav_pwd"
         set -l cd_dir (__symnav_trim_trailing_slash $argv[1])
 
         set -l relative_path (__symnav_relative_to "$cd_dir")
@@ -27,6 +32,15 @@ function __symnav_shadow_cd --argument arg
         if test $cd_status -ne 0
             set symnav_pwd $symnav_prevd
         end
+
+        if not test "$symnav_prevd" = "$symnav_pwd"
+            set -g symnav_dirprev $symnav_dirprev "$symnav_prevd"
+        end
+
         return $cd_status
+    end
+
+    if not test "$symnav_prevd" = "$symnav_pwd"
+        set -g symnav_dirprev $symnav_dirprev "$symnav_prevd"
     end
 end
