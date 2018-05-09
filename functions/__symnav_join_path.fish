@@ -1,3 +1,8 @@
 function __symnav_join_path
-    string join '/' $argv
+    # Root directory if empty list
+    if test -z "$argv"
+        echo '/'
+    else
+        string join '/' $argv
+    end
 end

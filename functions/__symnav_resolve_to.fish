@@ -11,6 +11,9 @@ function __symnav_resolve_to --argument path
     and set -l path_to_resolve $to_dir
     or set -l path_to_resolve "$symnav_pwd/$to_dir"
 
+    # Replace all //'s. This can occur if symnav_pwd is '/'
+    set -l path_to_resolve (string replace --all -- '//' '/' "$path_to_resolve")
+
     set -l path_list (__symnav_split_path "$path_to_resolve")
 
     set -l resolved_path
