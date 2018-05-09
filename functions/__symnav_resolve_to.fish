@@ -9,10 +9,7 @@ function __symnav_resolve_to --argument path
 
     __symnav_is_absolute "$to_dir"
     and set -l path_to_resolve $to_dir
-    or set -l path_to_resolve "$symnav_pwd/$to_dir"
-
-    # Replace all //'s. This can occur if symnav_pwd is '/'
-    set -l path_to_resolve (string replace --all -- '//' '/' "$path_to_resolve")
+    or set -l path_to_resolve (__symnav_trim_trailing_slash $symnav_pwd)/$to_dir
 
     set -l path_list (__symnav_split_path "$path_to_resolve")
 

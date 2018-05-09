@@ -10,7 +10,7 @@ function __symnav_relative_to --argument path
 
     __symnav_is_absolute "$to_dir"
     and set -l path_to_resolve $to_dir
-    or set -l path_to_resolve "$symnav_pwd/$to_dir"
+    or set -l path_to_resolve (__symnav_trim_trailing_slash $symnav_pwd)/$to_dir
 
     set -l path_list (__symnav_split_path "$path_to_resolve")
     set -l symlink_detected 0
