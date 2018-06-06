@@ -40,13 +40,13 @@ set symnav_fish_prompt 1 (0 to disable)
 set symnav_substitution_mode symlink (or 'ask')
 
 # Execute immediately after command line substitution has occurred.
-set symnav_execute_substitution 0 (1 to enable)
+set symnav_execute_substitution 1 (0 to disable)
 
 # Substitute '$PWD' for '$symnav_pwd' prior to command execution.
 set symnav_substitute_PWD 1 (0 to disable)
 
 # Initialize symnav during first execution or completion.
-set symnav_lazy_initialize 0 (1 to enable)
+set symnav_lazy_initialize 1 (0 to disable)
 
 # List of additional functions to modify for symnav compatibility.
 # Instances of '$PWD', 'realpath', will be replaced by a new in memory function

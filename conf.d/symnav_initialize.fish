@@ -1,11 +1,11 @@
 set -q symnav_initialized          ; or set symnav_initialized 0
-set -q symnav_lazy_initialize      ; or set symnav_lazy_initialize 0
+set -q symnav_lazy_initialize      ; or set symnav_lazy_initialize 1
 set -q symnav_pwd                  ; or set symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
 set -q symnav_prompt_pwd           ; or set symnav_prompt_pwd 1
 set -q symnav_fish_prompt          ; or set symnav_fish_prompt 1
 set -q symnav_substitution_mode    ; or set symnav_substitution_mode 'symlink'
 set -q symnav_substitute_PWD       ; or set symnav_substitute_PWD 1
-set -q symnav_execute_substitution ; or set symnav_execute_substitution 0
+set -q symnav_execute_substitution ; or set symnav_execute_substitution 1
 
 function __symnav_initialize
     test $symnav_initialized -eq 1
