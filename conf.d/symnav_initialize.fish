@@ -3,7 +3,6 @@ set -q symnav_lazy_initialize      ; or set symnav_lazy_initialize 0
 set -q symnav_pwd                  ; or set symnav_pwd (test (realpath "$HOME") = "$PWD"; and echo "$HOME"; or echo "$PWD")
 set -q symnav_prompt_pwd           ; or set symnav_prompt_pwd 1
 set -q symnav_fish_prompt          ; or set symnav_fish_prompt 1
-set -q symnav_fix_function_list    ; or set symnav_fix_function_list 'prompt_pwd' 'fish_prompt'
 set -q symnav_substitution_mode    ; or set symnav_substitution_mode 'symlink'
 set -q symnav_substitute_PWD       ; or set symnav_substitute_PWD 1
 set -q symnav_execute_substitution ; or set symnav_execute_substitution 0
@@ -22,10 +21,10 @@ function __symnav_initialize
     or set -l bind_check 'functions fish_user_key_bindings'
     if status --is-interactive
         if test (eval $bind_check | grep __symnav_execute | wc -l) -eq 0
-            echo "symnav: execution bindings may not be installed" 1>&2
+            __symnav_msg "execution bindings may not be installed"
         end
         if test (eval $bind_check | grep __symnav_complete | wc -l) -eq 0
-            echo "symnav: completion bindings may not be installed" 1>&2
+            __symnav_msg "completion bindings may not be installed"
         end
     end
 
@@ -42,20 +41,33 @@ function __symnav_initialize
         functions --copy $func $function_name
     end
 
-    for func in $symnav_fix_function_list $symnav_user_fix_function_list
-        __symnav_fix_function $func
+    if set -q symnav_user_fix_function_list
+        __symnav_msg "symnav_user_fix_function_list is deprecated and will be removed soon"
+    end
+
+    #
+    # Configuration for some popular themes
+    #
+    set -l funcs 'prompt_pwd' 'fish_prompt' $symnav_modify_functions $symnav_user_fix_function_list
+    # - pure
+    set funcs $funcs 'fish_title' '__parse_current_folder'
+    # - bobthefish
+    set funcs  $funcs '__bobthefish_prompt_dir'
+
+    for func in $funcs
+        __symnav_modify_function $func
     end
 
     set symnav_initialized 1
 end
 
 # Parses func for '$PWD', 'realhome' and replaces updates accordingly.
-function __symnav_fix_function --arg func
+function __symnav_modify_function --arg func
     if not functions -q $func
         status --is-interactive
         and test $symnav_initialized -eq 0
         and test $symnav_lazy_initialize -eq 0
-        and echo "symnav: Function $func does not exist" 1>&2
+        and __symnav_msg "Function $func does not exist"
         return
     end
     functions --copy $func __symnav_fish_$func
