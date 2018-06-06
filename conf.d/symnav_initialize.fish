@@ -64,10 +64,10 @@ end
 # Parses func for '$PWD', 'realhome' and replaces updates accordingly.
 function __symnav_modify_function --arg func
     if not functions -q $func
-        status --is-interactive
-        and test $symnav_initialized -eq 0
-        and test $symnav_lazy_initialize -eq 0
-        and __symnav_msg "Function $func does not exist"
+        # status --is-interactive
+        # and test $symnav_initialized -eq 0
+        # and test $symnav_lazy_initialize -eq 0
+        # and __symnav_msg "Function $func does not exist"
         return
     end
     functions --copy $func __symnav_fish_$func
