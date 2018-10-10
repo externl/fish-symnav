@@ -16,17 +16,18 @@ function __symnav_initialize
 
     # Check that symnav bindings are installed. Lazy initializations are called after setup so the bind
     # command is available. By default we scan the 'fish_user_key_bindings' function
-    test $symnav_lazy_initialize -eq 1
-    and set -l bind_check 'bind'
-    or set -l bind_check 'functions fish_user_key_bindings'
-    if status --is-interactive
-        if test (eval $bind_check | grep __symnav_execute | wc -l) -eq 0
-            __symnav_msg "execution bindings may not be installed"
-        end
-        if test (eval $bind_check | grep __symnav_complete | wc -l) -eq 0
-            __symnav_msg "completion bindings may not be installed"
-        end
-    end
+
+    # test $symnav_lazy_initialize -eq 1
+    # and set -l bind_check 'bind'
+    # or set -l bind_check 'functions fish_user_key_bindings'
+    # if status --is-interactive
+    #     if test (eval $bind_check | grep __symnav_execute | wc -l) -eq 0
+    #         __symnav_msg "execution bindings may not be installed"
+    #     end
+    #     if test (eval $bind_check | grep __symnav_complete | wc -l) -eq 0
+    #         __symnav_msg "completion bindings may not be installed"
+    #     end
+    # end
 
     # Install all shadow functions. Fish functions are copied to __symnav_fish_$function_name
     for func in (functions --all | grep __symnav_shadow_)
@@ -45,16 +46,21 @@ function __symnav_initialize
         __symnav_msg "symnav_user_fix_function_list is deprecated and will be removed soon"
     end
 
-    #
     # Configuration for some popular themes
-    #
-    set -l funcs 'prompt_pwd' 'fish_prompt' $symnav_modify_functions $symnav_user_fix_function_list
+    set -l theme_functions
     # - pure
-    set funcs $funcs 'fish_title' '__parse_current_folder'
+    set theme_functions $theme_functions 'fish_title' '__parse_current_folder'
     # - bobthefish
-    set funcs  $funcs '__bobthefish_prompt_dir'
+    set theme_functions  $theme_functions '__bobthefish_prompt_dir'
 
-    for func in $funcs
+    # filter functions that do not exist (theme not installed)
+    for func in $theme_functions
+        if not functions -q $func
+            set -e theme_functions[(contains --index $func $theme_functions)]
+        end
+    end
+
+    for func in 'prompt_pwd' 'fish_prompt' $theme_functions $symnav_modify_functions $symnav_user_fix_function_list
         __symnav_modify_function $func
     end
 
@@ -64,10 +70,10 @@ end
 # Parses func for '$PWD', 'realhome' and replaces updates accordingly.
 function __symnav_modify_function --arg func
     if not functions -q $func
-        # status --is-interactive
-        # and test $symnav_initialized -eq 0
-        # and test $symnav_lazy_initialize -eq 0
-        # and __symnav_msg "Function $func does not exist"
+        status --is-interactive
+        and test $symnav_initialized -eq 0
+        and test $symnav_lazy_initialize -eq 0
+        and __symnav_msg "$func does not exist"
         return
     end
     functions --copy $func __symnav_fish_$func
